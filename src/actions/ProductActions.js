@@ -1,0 +1,64 @@
+import axios from "axios"
+import { PRODUCTS_FETCH, PRODUCT_FETCH, PRODUCT_CREATE, PRODUCT_UPDATE } from "./types"
+
+export const productFetch = id => {
+    return dispatch => {
+        axios.get("http://localhost:5000/product/" + id).then(
+            res => {
+                dispatch({ type: PRODUCT_FETCH, payload: res.data })
+            }
+        )
+    }
+}
+
+export const productsFetchFromCategory = id => {
+    return dispatch => {
+        axios.get("http://localhost:5000/product/category/" + id).then(
+            res => {
+                dispatch({ type: PRODUCTS_FETCH, payload: res.data }) 
+            }
+        )
+    }
+}
+
+export const productsFetch = () => {
+    return dispatch => {
+        axios.get("http://localhost:5000/product/all").then(
+            res => {
+                dispatch({ type: PRODUCTS_FETCH, payload: res.data })
+            }
+        )
+    }
+}
+
+/*
+export const productsDelete = id => {
+    return dispatch => {
+        axios.delete("http://localhost:3001/products/" + id).then(
+            res => {
+                axios.get("http://localhost:3001/products").then(
+                    res => {
+                        dispatch({ type: PRODUCTS_FETCH, payload: res.data })
+                    }
+                )
+            }
+        )
+    }
+}
+
+export const productCreate = values => {
+    return dispatch => {
+        axios.post("http://localhost:3001/products",values).then(res=>{
+            dispatch({type : PRODUCT_CREATE });
+        })
+    }
+}
+
+export const productUpdate = (id,values) => {
+    console.log("productUpdate",productUpdate)
+    return dispatch => {
+        axios.put("http://localhost:3001/products/"+id,values).then(res=>{
+            dispatch({type : PRODUCT_UPDATE});
+        })
+    }
+}*/
