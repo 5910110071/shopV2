@@ -25,7 +25,7 @@ export const orderConfirm2 = (product, saleman_id, user, quantity) => {// เพ
                     }
                     axios.put("http://localhost:5000/basket/" + user.id, res.data).then(
                         res => {
-                            console.log("here555555555555555555555",findOrder.quantity)
+                            //console.log("here555555555555555555555",findOrder.quantity)
                             axios.get("http://localhost:5000/basket/" + user.id).then(
                                 res => {
                                     dispatch({ type: BASKET_POST, payload: res.data })

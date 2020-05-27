@@ -3,7 +3,7 @@ import { connect } from "react-redux"
 import Header from '../../components/Header'
 import Footer from '../../components/Footer'
 import WaitPaymentForm from "../../containers/waitPayment/WaitPaymentForm"
-import { orderPaymentFetch, ordersPaymentPut, basketFetch, basketPost } from '../../actions/'
+import { orderPaymentFetch, ordersPaymentPut, basketFetch, basketPost , basketDelete } from '../../actions/'
 import { authen } from "../../FirebaseConfig";
 
 class PaymentOrderComfirm extends Component {
@@ -36,6 +36,9 @@ class PaymentOrderComfirm extends Component {
                     formValues.status = "ชำระเงินแล้ว"
                     console.log("formValues", formValues)
                     this.props.basketPost(formValues)
+
+                    //this.props.basketDelete(this.props.basket._id)
+
                     console.log(" formValues.Silp", formValues);
                 })
             });
@@ -60,4 +63,4 @@ function mapStateToProps({ form, orders, basket }) {
     return { formValues: form.paymentForm ? form.paymentForm.values : null, orders, basket }
 }
 
-export default connect(mapStateToProps, { orderPaymentFetch, ordersPaymentPut, basketFetch, basketPost })(PaymentOrderComfirm)
+export default connect(mapStateToProps, { orderPaymentFetch, ordersPaymentPut, basketFetch, basketPost , basketDelete })(PaymentOrderComfirm)
