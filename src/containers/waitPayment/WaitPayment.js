@@ -18,8 +18,8 @@ class PaymentOrder extends Component {
         console.log("here")
         //this.props.basketFetch(this.props.user.id)
     }
-    onSubmit(id) {
-        this.props.basketDelete(id) 
+    onSubmit(user_id) {
+        this.props.basketDelete(user_id) 
     }
     //const {orders , onSubmit }
     render() {

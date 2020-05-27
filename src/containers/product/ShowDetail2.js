@@ -1,119 +1,107 @@
 import React, { Component } from 'react';
 import { withRouter } from "react-router-dom"
 import { connect } from "react-redux"
-import Rating from '@material-ui/lab/Rating';
-import Typography from '@material-ui/core/Typography';
-import Box from '@material-ui/core/Box';
-
 import { Link } from 'react-router-dom'
-
-
-
 import StarRatingComponent from 'react-star-rating-component';
 
-
-import { productFetch, orderAdd, orderDelete, orderConfirm, ratingFetch2, orderConfirm2 } from "../../actions"
+import { ratingFetch2, orderConfirm2, basketFetch } from "../../actions"
 
 class ShowDetail2 extends Component {
+
     constructor(props) {
         super(props)
         this.state = {
             rating: 1,
             confirm: false,
-            edit: true,
-            quantity: 1
+            quantity: 1,
+            overflow: false,
+            totalQuantity : 1
         }
-
     }
+
     onStarClick(nextValue, prevValue, name) {
         this.setState({ rating: nextValue });
     }
 
-    // componentDidMount() {
-    //     if (this.props.match.params.id) {
-    //         this.props.productFetch(this.props.match.params.id)
-    //     }
-    // }
     componentDidMount() {
-        //if (this.props.rating != {} || this.props.rating != null) {
+        
         this.props.ratingFetch2(this.props.product_id)
         console.log("componentDidMount", this.props.rating)
-        //}
+    
+        this.props.basketFetch(this.props.user.id)
     }
 
     addOrder(product) {
-        // this.checkConfirmOrder(product.product_id)
-        // if (this.getQuantity(product) < product.product_inventory)
-        //     this.props.orderAdd(product)
         if (this.state.quantity < product.product_inventory)
             this.setState({
                 quantity: this.state.quantity + 1
             })
     }
 
-    checkConfirmOrder(id) {
-
-        let findOrder = this.props.orderBuffer.orders.find(order => order.product.product_id == id);
-        if (findOrder) {
-            this.setState({
-                confirm: findOrder.confirm
-            })
-        }
-    }
-
-    delOrder(id) {
-        // this.checkConfirmOrder(id)
-        // let findOrder = this.props.orderBuffer.orders.find(order => order.product.product_id == id);
-        // if (findOrder) {
-        //     this.props.orderDelete(id)
-        // }
+    
+    delOrder() {
         if (this.state.quantity > 1)
             this.setState({
                 quantity: this.state.quantity - 1
             })
     }
 
-    getQuantity(product) {
-        let findOrder = this.props.orderBuffer.orders.find(order => order.product.product_id == product.product_id);
-        if (findOrder) {
-            return findOrder.quantity;
-        } else {
-            return 0
-        }
-    }
 
-    checkQuantity(product) {
-        console.log("checkQuantity(product)", product)
-        let findOrder = this.props.orderBuffer.orders.find(order => order.product.product_id == product.product_id);
-        console.log("findOrder", findOrder)
+    confirmOrder(product, saleman_id) {
+        
+        if (this.props.basket) {
+            
+            let findOrder = this.props.basket.orders.find(order => order.product.product_id == product.product_id);
+            if (findOrder) {
+                
+                //console.log("findOrder.quantity",findOrder.quantity)
+                if (findOrder.quantity + this.state.quantity > findOrder.product.product_inventory) {
 
-        if (findOrder) {
-            console.log("here")
-            if (findOrder.quantity == 0) {
+                    this.setState({
+                        overflow: true,
+                        quantity : 1
+                    })
+                }
+                else {
 
+                    this.props.orderConfirm2(product, saleman_id, this.props.user, this.state.quantity)
+                    this.setState({
+                        confirm: true,
+                        quantity : 1
+
+                    })
+                }
+            }
+            else {
+                this.props.orderConfirm2(product, saleman_id, this.props.user, this.state.quantity)
+                this.setState({
+                    confirm: true,
+                    quantity : 1
+                   
+                })
             }
         }
         else {
-            console.log("here2")
-            this.addOrder(product)
+            this.props.orderConfirm2(product, saleman_id, this.props.user, this.state.quantity)
+            this.setState({
+                confirm: true,
+                quantity : 1
+            })
         }
     }
 
-    confirmOrder(product, saleman_id) {
-        this.props.orderConfirm2(product, saleman_id, this.props.user, this.state.quantity)
-        this.setState({
-            confirm: true,
-        })
-    }
+    // checkQuantity(){
+    //     //console.log("checkQuantity")
+    //     if(this.props.basket){
+    //         let findOrder = this.props.basket.orders.find(order => order.product.product_id === this.props.product_id);
+    //         console.log("checkQuantity",findOrder.quantity)
+    //         return findOrder.quantity
+    //     }
+    // }
 
     render() {
-        console.log("this.props.rating", this.props.rating)
         const { products } = this.props
-        const { rating } = this.state;
 
-        // if (products != null) {
-        //     this.checkQuantity(products)
-        // }
         return (
             <div className="container" >
                 <h2 className="text-center pt-3 mb-3">รายละเอียดสินค้า</h2>
@@ -122,8 +110,16 @@ class ShowDetail2 extends Component {
 
                         {this.state.confirm &&
                             <div className="container mt-3">
-                                <div class="alert alert-success text-center " role="alert">
+                                <div className="alert alert-success text-center " role="alert">
                                     <h4 className="title col-12 text-right text-center">ได้ทำการเพิ่มสินค้าลงตะกร้าแล้วกรุณาตรวจสอบที่ <Link to="/waitPayment">ตะกร้าสินค้า </Link></h4>
+                                </div>
+                            </div>
+                        }
+
+                        {this.state.overflow &&
+                            <div className="container mt-3">
+                                <div className="alert alert-danger text-center " role="alert">
+                                    <h4 className="title col-12 text-right text-center">จำนวนสินค้าไม่เพียงพอ <Link to="/waitPayment">ตะกร้าสินค้า </Link></h4>
                                 </div>
                             </div>
                         }
@@ -148,9 +144,9 @@ class ShowDetail2 extends Component {
                                     </button>
                                 </span>
                                 <input type="text" id="quantity" name="quantity" class="form-control input-number col-1 text-center" value={this.state.quantity} min="1" max="10" />
-                                <span class="input-group-btn">
+                                <span className="input-group-btn">
                                     <button type="button" class="quantity-right-plus btn btn-secondary btn-number mr-2" data-type="plus" data-field="" onClick={() => this.addOrder(products)}>
-                                        <span class="glyphicon glyphicon-plus">+</span>
+                                        <span className="glyphicon glyphicon-plus">+</span>
                                     </button>
                                 </span>
                             </div>
@@ -173,7 +169,6 @@ class ShowDetail2 extends Component {
                                     />
                                 }
                             </div>
-
                         </div>
                     </div>
                 </div>
@@ -182,11 +177,8 @@ class ShowDetail2 extends Component {
     }
 }
 
-
-
-function mapStateToProps({ orderBuffer, rating, user }) {
-    console.log("orderBuffer", orderBuffer, user)
-    return { orderBuffer, rating, user }
+function mapStateToProps({ rating, user, basket }) {
+    return { rating, user, basket }
 }
 
-export default withRouter(connect(mapStateToProps, { orderAdd, orderDelete, orderConfirm, ratingFetch2, orderConfirm2 })(ShowDetail2))
+export default withRouter(connect(mapStateToProps, { ratingFetch2, orderConfirm2, basketFetch })(ShowDetail2))

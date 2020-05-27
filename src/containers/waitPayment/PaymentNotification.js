@@ -3,13 +3,13 @@ import { connect } from "react-redux"
 import Header from '../../components/Header'
 import Footer from '../../components/Footer'
 import WaitPaymentForm from "../../containers/waitPayment/WaitPaymentForm"
-import { orderPaymentFetch, ordersPaymentPut , basketFetch , basketPost } from '../../actions/'
+import { orderPaymentFetch, ordersPaymentPut, basketFetch, basketPost } from '../../actions/'
 import { authen } from "../../FirebaseConfig";
 
 class PaymentOrderComfirm extends Component {
     componentDidMount() {
         if (this.props.match.params.id) {
-            console.log("this.props.match.params.id",this.props.match.params.id)
+            console.log("this.props.match.params.id", this.props.match.params.id)
             this.props.basketFetch(this.props.match.params.id)
         }
     }
@@ -42,7 +42,7 @@ class PaymentOrderComfirm extends Component {
     }
     render() {
         const { formValues, basket } = this.props;
-        
+
         return (
             <div>
                 <Header menu={this.props.match.path} />
@@ -56,8 +56,8 @@ class PaymentOrderComfirm extends Component {
     }
 }
 
-function mapStateToProps({ form, orders , basket }) {
-    return { formValues: form.paymentForm ? form.paymentForm.values : null, orders , basket }
+function mapStateToProps({ form, orders, basket }) {
+    return { formValues: form.paymentForm ? form.paymentForm.values : null, orders, basket }
 }
 
-export default connect(mapStateToProps, { orderPaymentFetch, ordersPaymentPut ,basketFetch , basketPost })(PaymentOrderComfirm)
+export default connect(mapStateToProps, { orderPaymentFetch, ordersPaymentPut, basketFetch, basketPost })(PaymentOrderComfirm)

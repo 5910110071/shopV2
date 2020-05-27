@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { productFetch, orderAdd, orderDelete, orderConfirm  } from "../../actions"
+import { productFetch } from "../../actions"
 import { connect } from "react-redux"
 
 import ShowDetail2 from "./ShowDetail2"
@@ -11,13 +11,14 @@ import Footer from "../../components/Footer"
 class Product extends Component {
     
     componentDidMount() {
-        console.log("this.props.match.params",this.props.match.params)
         if (this.props.match.params.id) {
             this.props.productFetch(this.props.match.params.id)
         }
     }
 
     render() {
+
+        console.log(this.props.basket)
        
         return (
             <div>
@@ -33,9 +34,7 @@ class Product extends Component {
     }
 }
 
-function mapStateToProps({ products   }) {
-    //console.log("products", products )
-    return { products  }
+function mapStateToProps({ products , basket}) {
+    return { products ,basket  }
 }
-
 export default connect(mapStateToProps, { productFetch })(Product)

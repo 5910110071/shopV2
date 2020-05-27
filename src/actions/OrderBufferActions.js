@@ -11,7 +11,7 @@ export const ordersPost = ({ orders, totalPrice }, user) => { // ตอนนี
             }
         )
     }
-}
+} 
 
 export const ordersFetch = () => {
     return dispatch => {
